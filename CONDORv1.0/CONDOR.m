@@ -3,7 +3,7 @@
 load(filename)
 
 prompt = 'What is the dimension (1,2,3)? ';         % Ask for dimension of the trajectory (1, 2, 3)
-d = input(prompt);                                  % 1 for traj1D_example
+d = input(prompt);    % 1 for traj_example
 
 %% Ask user what to do (networks training and/or prediction)
 prompt = 'Would you like to train CONDOR networks for classification (y/n)? ';
@@ -41,13 +41,15 @@ if exist('MomentaInputs', 'var') == 0
     MomentaInputs = ExtractFeatures(traj, Dataset.dimension, Dataset.size);
     cd ..
     
-    save 'tmp' '-regexp' choice
-    clearvars -except traj Dataset filename Alpha Model MomentaInputs 
-    save(filename, 'traj', 'Dataset', 'filename', 'Alpha', 'Model', 'MomentaInputs')
-    load('tmp')
-    delete 'tmp.mat'
+    varTosave = {'filename', 'traj', 'Dataset', 'MomentaInputs', 'Alpha', 'Model'};
+    
+    for i = 1:length(varTosave)
+        if exist(varTosave{i}, 'var')
+            save(filename, varTosave{i}, '-append')
+        end
+    end
 end
-
+    
 %% Call to function to train the networks for classification (reference needed)
 if choice1 == 'y'
     disp('Training for classification starting...')
